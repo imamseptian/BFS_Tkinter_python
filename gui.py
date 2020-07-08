@@ -137,12 +137,13 @@ def findPath():
 
     while not findEnd(maze, add):
         add = nums.get()
+        
         for j in ["L", "R", "U", "D"]:
-            put = add + j
-            if valid(maze, put):
-                nums.put(put)
-
-
+            step = add + j
+            if valid(maze, step):
+                nums.put(step)
+       
+p=[]
 def findEnd(maze, moves):
 
     i = startY
@@ -159,26 +160,36 @@ def findEnd(maze, moves):
 
         elif move == "D":
             j += 1
-
+    # print(moves)
+    
+    p.append(moves)
+    
     if maze[j][i] == "X":
         print("Found: " + moves)
-        openWindow(maze, moves)
+        # print(p)
+        openWindowstep(maze, moves,p)
+        # openWindowstepstep(maze,moves,p)
+        openWindow(maze, moves,p)
+        
 
         return True
 
     return False
 
 
-def openWindow(maze, path=""):
+def openWindow(maze, path,steps):
     top = Toplevel()
     top.title('Short Path')
-
+    
     btns = []
     btn_nr = -1
 
     i = startY
     j = startX
+    
     pos = set()
+    stepspos=set()
+    stepspos2=set()
     for move in path:
         if move == "L":
             i -= 1
@@ -192,37 +203,152 @@ def openWindow(maze, path=""):
         elif move == "D":
             j += 1
         pos.add((j, i))
+    # print(pos)
+    # print(steps)
+    s=0
+    for moves in steps :
+        k=startY
+        l=startX
+        # print(len(moves))
+        for move in moves:
+            if move == "L":
+                k -= 1
 
+            elif move == "R":
+                k += 1
+
+            elif move == "U":
+                l -= 1
+
+            elif move == "D":
+                l += 1
+        # s+=1
+        if s==len(moves):
+            pass
+        else:
+            s+=1
+        stepspos.add((l, k))
+        stepspos2.add((s,l, k))
+    # print(sorted(stepspos))
+    
     for j, row in enumerate(maze):
         for i, col in enumerate(row):
+                
+            # print(m,j,i)
             btn_nr += 1
             if(col == "#"):
                 btns.append(Button(top, bg='black', height=2, width=3, state=DISABLED,
-                                   command=lambda x=btn_nr: printtombol(x)))
+                                command=lambda x=btn_nr: printtombol(x)))
                 btns[btn_nr].grid(row=j, column=i)
             elif(col == "O"):
                 btns.append(Button(top, bg='white', height=2, width=3, state=DISABLED,
-                                   command=lambda x=btn_nr: printtombol(x)))
+                                command=lambda x=btn_nr: printtombol(x)))
                 btns[btn_nr].grid(row=j, column=i)
             elif(col == "X"):
                 btns.append(Button(top, bg='red', height=2, width=3, state=DISABLED,
-                                   command=lambda x=btn_nr: printtombol(x)))
+                                command=lambda x=btn_nr: printtombol(x)))
                 btns[btn_nr].grid(row=j, column=i)
-            else:
-                # btns.append(Button(top, bg='blue', height=2, width=3,state=DISABLED,
-                #             command=lambda x=btn_nr: printtombol(x)))
-                # btns[btn_nr].grid(row=j, column=i)
+
+            
+            else: 
                 if (j, i) in pos:
-                    # print("+ ", end="")
-                    btns.append(Button(top, bg='yellow', height=2, width=3, state=DISABLED,
-                                       command=lambda x=btn_nr: printtombol(x)))
+                    btns.append(Button(top, bg='yellow', height=2, width=3, state=DISABLED, 
+                                    command=lambda x=btn_nr: printtombol(x)))
                     btns[btn_nr].grid(row=j, column=i)
+                elif (j,i) in stepspos:
+                    b = j
+                    k = i
+                    btns.append(Button(top, bg='green', height=2, width=3, state=DISABLED,
+                                    command=lambda x=btn_nr: printtombol(x)))
+                    btns[btn_nr].grid(row=b, column=k)  
                 else:
+                
                     btns.append(Button(top, bg='blue', height=2, width=3, state=DISABLED,
-                                       command=lambda x=btn_nr: printtombol(x)))
+                                    command=lambda x=btn_nr: printtombol(x)))
                     btns[btn_nr].grid(row=j, column=i)
 
+def openWindowstep(maze, path,steps):
+    top = Toplevel()
+    top.title('STEPS BFS')
+    print('steps = ',steps[2:])
+    btns = []
+    btn_nr = -1
 
+    i = startY
+    j = startX
+    
+    pos = set()
+    stepspos=set()
+    stepspos2=set()
+    for move in path:
+        # print(move)
+        if move == "L":
+            i -= 1
+
+        elif move == "R":
+            i += 1
+
+        elif move == "U":
+            j -= 1
+
+        elif move == "D":
+            j += 1
+        pos.add((j, i))
+    # print(pos)
+    # print(steps)
+    s=0
+    for moves in steps :
+        k=startY
+        l=startX
+        # print(len(moves))
+        for move in moves:
+            if move == "L":
+                k -= 1
+
+            elif move == "R":
+                k += 1
+
+            elif move == "U":
+                l -= 1
+
+            elif move == "D":
+                l += 1
+        # s+=1
+        if s==len(moves):
+            pass
+        else:
+            s+=1
+        stepspos.add((l, k))
+        stepspos2.add((s,l, k))
+    # print(sorted(stepspos))
+    
+    
+    for j, row in enumerate(maze):
+        for i, col in enumerate(row):
+        
+            btn_nr += 1
+            
+            if(col == "#"):
+                btns.append(Button(top, bg='black', height=2, width=3, state=DISABLED,
+                                command=lambda x=btn_nr: printtombol(x)))
+                btns[btn_nr].grid(row=j, column=i)
+            elif(col == "O"):
+                btns.append(Button(top, bg='white', height=2, width=3, state=DISABLED,
+                                command=lambda x=btn_nr: printtombol(x)))
+                btns[btn_nr].grid(row=j, column=i)
+            elif(col == "X"):
+                btns.append(Button(top, bg='red', height=2, width=3, state=DISABLED,
+                                command=lambda x=btn_nr: printtombol(x)))
+                btns[btn_nr].grid(row=j, column=i)
+            elif ((j,i) in stepspos):
+                btns.append(Button(top, bg='green', height=2, width=3, state=DISABLED,
+                                command=lambda x=btn_nr: printtombol(x)))
+                btns[btn_nr].grid(row=j, column=i) 
+            else:     
+                btns.append(Button(top, bg='blue', height=2, width=3, state=DISABLED,
+                            command=lambda x=btn_nr: printtombol(x)))
+                btns[btn_nr].grid(row=j, column=i)
+                                
 def valid(maze, moves):
     # for x, pos in enumerate(maze[0]):
     #     if pos == "O":
@@ -296,7 +422,7 @@ for j, row in enumerate(maze):
 frame1 = LabelFrame(root, padx=20, pady=20)
 frame1.grid(row=0, column=1)
 
-deskripsi = LabelFrame(frame1, text="Deskripsi", padx=40, pady=40)
+deskripsi = LabelFrame(frame1, text="Deskripsi", padx=60, pady=60)
 deskripsi.grid(row=0, column=0)
 
 bt1 = Button(deskripsi, bg='blue', height=2, width=4,
@@ -323,6 +449,11 @@ bt5 = Button(deskripsi, bg='yellow', height=2, width=4,
              state=DISABLED).grid(row=4, column=0)
 text5 = Label(deskripsi, text="= Jalur BFS")
 text5.grid(row=4, column=1)
+
+bt6 = Button(deskripsi, bg='green', height=2, width=4,
+             state=DISABLED).grid(row=5, column=0)
+text6 = Label(deskripsi, text="= Steps")
+text6.grid(row=5, column=1)
 
 perintah = LabelFrame(frame1, text="Perintah", padx=40, pady=40)
 perintah.grid(row=1, column=0)
